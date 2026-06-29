@@ -1,0 +1,44 @@
+# ADR-001: Multi-Tenant Strategy
+
+## Status
+
+Accepted
+
+## Date
+
+2026-06-28
+
+## Context
+
+Famm is the first application built on top of a broader relationship-commerce platform. The platform must eventually support multiple businesses, professionals, communities, customers, applications, and industries.
+
+If tenant ownership is not designed into the data model from the beginning, the platform may become difficult to scale, secure, or adapt for future organizations and applications.
+
+The platform must support:
+
+- Independent providers
+- Multi-provider businesses
+- Communities
+- Future vertical applications
+- Third-party applications
+- Multiple industries
+- Separate customer networks
+- Role-based access control
+- Future API consumers and AI agents
+
+## Decision
+
+All tenant-sensitive business records must include a tenant ownership field.
+
+The platform will use `organization_id` as the primary tenant boundary for business-owned records.
+
+Where a record may not belong to an organization, the platform may use `tenant_id` or `owner_user_id`, but that exception must be documented.
+
+The default ownership pattern is:
+
+```text
+organization_id
+created_at
+updated_at
+created_by
+deleted_at, when soft deletion is required
