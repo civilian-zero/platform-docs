@@ -1,0 +1,203 @@
+# ADR-004: Referral Attribution Model
+
+## Status
+
+Accepted
+
+## Date
+
+2026-06-28
+
+## Context
+
+Relationship-driven commerce depends on trust, word of mouth, recommendations, referrals, and community participation.
+
+Famm should eventually support referrals between:
+
+- Clients and trainers
+- Clients and other clients
+- Trainers and clients
+- Businesses and trainers
+- Affiliates and customers
+- Communities and members
+
+The broader platform must support referral attribution across many industries, not only fitness.
+
+Examples include:
+
+- A client referring a friend to a trainer
+- A student referring another student to a tutor
+- A customer referring someone to a tattoo artist
+- A therapist receiving a referral from a professional partner
+- A creator rewarding an affiliate
+- A community driving a purchase
+- A coach rewarding ambassadors
+
+Referral behavior should not be treated as a marketing afterthought. It should be a first-class platform capability.
+
+## Decision
+
+The platform will model referrals as first-class platform objects and domain events.
+
+Referral attribution must track:
+
+- Referrer
+- Referred party
+- Target entity
+- Attribution source
+- Conversion event
+- Reward or compensation status
+- Associated transaction, when applicable
+- Associated offer, when applicable
+- Associated organization or tenant
+
+The platform will support both informal referrals and formal affiliate-style attribution.
+
+## Layer
+
+Platform Core
+
+## Platform Primitives Affected
+
+- User
+- Organization
+- Relationship
+- Offer
+- Transaction
+- Referral
+- Affiliate
+- Event
+- ReputationSignal
+
+## Proposed Referral Model
+
+The platform referral model should support:
+
+```text
+referral_id
+organization_id or tenant_id
+referrer_entity_id
+referrer_entity_type
+referred_entity_id
+referred_entity_type
+target_entity_id
+target_entity_type
+offer_id
+transaction_id
+status
+source
+created_at
+converted_at
+rewarded_at
+metadata
+```
+
+Example referral statuses:
+
+```text
+created
+clicked
+claimed
+converted
+rewarded
+expired
+cancelled
+```
+
+Example referral events:
+
+```text
+referral.created
+referral.clicked
+referral.claimed
+referral.converted
+referral.rewarded
+```
+
+## Alternatives Considered
+
+### Alternative 1: Do Not Track Referrals in V1
+
+This would simplify the MVP, but it would weaken the long-term platform strategy.
+
+Rejected because referrals are core to relationship-commerce.
+
+### Alternative 2: Use UTM Parameters Only
+
+UTM tracking can help marketing attribution, but it does not create a platform-native referral graph.
+
+Rejected because the platform needs to understand who referred whom, what converted, and what value was created.
+
+### Alternative 3: First-Class Referral Primitive
+
+Accepted because referrals should become part of the platform graph, commerce model, reputation system, and future marketplace.
+
+## Consequences
+
+### Positive Consequences
+
+- Supports viral growth loops.
+- Supports creator-style economics.
+- Supports affiliate programs.
+- Supports community-driven commerce.
+- Supports word-of-mouth attribution.
+- Supports future recommendation systems.
+- Strengthens the platform’s relationship graph.
+
+### Negative Consequences
+
+- Requires careful fraud prevention.
+- Requires attribution rules.
+- Requires reward logic.
+- Requires privacy-aware design.
+- Requires clear event tracking.
+
+## Cross-Industry Impact
+
+This model supports referrals for:
+
+- Trainers
+- Therapists
+- Tutors
+- Music teachers
+- Tattoo artists
+- Coaches
+- Consultants
+- Creators
+- Community leaders
+
+Every relationship-driven industry benefits from trusted introductions and attribution.
+
+## Scale Impact
+
+### 1,000 Active Users
+
+Referral tracking can begin with simple referral links and manual reward logic.
+
+### 10,000 Active Users
+
+The platform can support automated attribution, referral dashboards, and basic rewards.
+
+### 100,000 Active Users
+
+Referral data becomes a major strategic asset for growth, recommendations, ranking, and marketplace dynamics.
+
+### Multiple Vertical Applications
+
+The same referral system can power different vertical applications without being rewritten.
+
+### Third-Party Developers
+
+Developers can integrate referral creation, attribution, and conversion APIs into their own applications.
+
+## AI Review Summary
+
+AI coding tools must not implement referrals as simple marketing fields or one-off tracking parameters when the behavior affects platform relationships, transactions, or rewards.
+
+When a feature includes recommendations, invitations, affiliate links, ambassador rewards, or word-of-mouth conversion, AI tools must evaluate whether it belongs in the `Referral` or `Affiliate` platform model.
+
+## Final Decision
+
+Accepted.
+
+Referrals will be modeled as first-class platform primitives and domain events. Referral attribution will become part of the platform’s relationship-commerce graph.
