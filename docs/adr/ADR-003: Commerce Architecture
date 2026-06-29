@@ -1,0 +1,221 @@
+# ADR-003: Commerce Architecture
+
+## Status
+
+Accepted
+
+## Date
+
+2026-06-28
+
+## Context
+
+Famm will need to support fitness commerce, including:
+
+- Sessions
+- Packages
+- Memberships
+- Recurring payments
+- One-time payments
+- Class bookings
+- Refunds
+- Discounts
+- Session credits
+
+However, the broader platform must eventually support many forms of relationship-driven commerce across multiple industries.
+
+Examples include:
+
+- Therapy appointments
+- Tutoring sessions
+- Music lessons
+- Tattoo deposits
+- Coaching programs
+- Consulting retainers
+- Creator subscriptions
+- Community memberships
+- Affiliate offers
+- Referral-based purchases
+
+If commerce is modeled only around fitness packages and memberships, the platform will be difficult to reuse.
+
+## Decision
+
+The platform will represent commerce using generalized platform primitives:
+
+- `Offer`
+- `Transaction`
+- `Subscription`
+- `Entitlement`
+- `Referral`
+- `Affiliate`
+- `Event`
+
+Famm may use application-layer labels such as “package,” “membership,” “session credit,” or “training plan,” but platform-core should use industry-neutral commerce language.
+
+## Layer
+
+Platform Core
+
+## Platform Primitives Affected
+
+- User
+- Organization
+- Activity
+- Offer
+- Transaction
+- Referral
+- Affiliate
+- Event
+- ReputationSignal
+
+## Core Commerce Concepts
+
+### Offer
+
+An `Offer` represents something that can be purchased, redeemed, booked, subscribed to, or claimed.
+
+Examples:
+
+```text
+single session
+class pass
+membership
+package
+subscription
+consulting block
+lesson bundle
+deposit
+community access
+```
+
+### Transaction
+
+A `Transaction` represents a financial or value exchange.
+
+Examples:
+
+```text
+purchase
+refund
+partial refund
+subscription payment
+credit redemption
+affiliate payout
+referral reward
+```
+
+### Subscription
+
+A `Subscription` represents recurring access, recurring payment, or recurring entitlement.
+
+Examples:
+
+```text
+monthly training membership
+weekly coaching program
+therapy subscription
+creator membership
+community access
+```
+
+### Entitlement
+
+An `Entitlement` represents access or usage rights created by a purchase.
+
+Examples:
+
+```text
+session credit
+membership access
+class pass
+program access
+community access
+consulting hours
+```
+
+## Alternatives Considered
+
+### Alternative 1: Fitness-Specific Package and Membership Tables
+
+This would be faster for Famm but would make future platform expansion harder.
+
+Rejected because it centers the platform around fitness terminology.
+
+### Alternative 2: Stripe-Only Data Model
+
+Stripe can manage payments, products, prices, subscriptions, and invoices, but the platform still needs its own commerce graph.
+
+Rejected as the sole model because Stripe should be an integration, not the source of truth for platform relationships, referrals, entitlements, and reputation.
+
+### Alternative 3: General Commerce Primitives
+
+Accepted because generalized commerce primitives can support fitness and future industries.
+
+## Consequences
+
+### Positive Consequences
+
+- Supports many forms of commerce.
+- Supports future subscriptions and memberships.
+- Supports packages and credits without making them fitness-specific.
+- Supports referrals and affiliates.
+- Supports Stripe while preserving platform ownership of commerce logic.
+- Supports cross-industry expansion.
+
+### Negative Consequences
+
+- Requires careful abstraction.
+- Requires mapping between Stripe objects and platform objects.
+- Requires clear entitlement logic.
+- Requires more upfront architecture work.
+
+## Cross-Industry Impact
+
+This decision supports commerce across:
+
+- Fitness training
+- Therapy
+- Tutoring
+- Music lessons
+- Tattoo appointments
+- Coaching
+- Consulting
+- Creator memberships
+- Community access
+
+Each industry can create application-specific offers while relying on the same platform primitives.
+
+## Scale Impact
+
+### 1,000 Active Users
+
+The platform can support simple one-time purchases and basic packages.
+
+### 10,000 Active Users
+
+The platform can support memberships, subscriptions, refunds, and entitlement tracking.
+
+### 100,000 Active Users
+
+The platform can support complex revenue flows, affiliate payouts, referral attribution, and marketplace economics.
+
+### Multiple Vertical Applications
+
+Each application can create its own offer types while sharing transaction, entitlement, and subscription infrastructure.
+
+### Third-Party Developers
+
+Developers can create and consume commerce APIs without needing to understand fitness-specific concepts.
+
+## AI Review Summary
+
+AI coding tools must not create platform-core entities named only around fitness, such as `TrainingPackage`, `TrainerMembership`, or `WorkoutSessionPurchase`.
+
+Instead, AI tools should map these concepts to `Offer`, `Transaction`, `Subscription`, and `Entitlement`.
+
+## Final Decision
+
+Accepted.
+
+The platform will use generalized commerce primitives. Famm may display fitness-specific commerce labels in the application layer, but platform-core will remain industry-neutral.
