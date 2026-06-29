@@ -1,0 +1,186 @@
+# ADR-002: Relationship Graph Architecture
+
+## Status
+
+Accepted
+
+## Date
+
+2026-06-28
+
+## Context
+
+Famm begins as a fitness application that connects trainers and clients. However, the long-term platform vision is broader than fitness.
+
+The platform must eventually support many types of relationships, including:
+
+- Trainer to client
+- Provider to customer
+- Business to provider
+- Provider to provider
+- Customer to customer
+- Community member to community
+- Referrer to referred user
+- Affiliate to customer
+- Coach to participant
+- Teacher to student
+- Therapist to patient or client
+- Consultant to client organization
+
+If these relationships are modeled as separate vertical-specific entities, the platform will become rigid and difficult to extend.
+
+## Decision
+
+The platform will represent relationships through a generalized `Relationship` primitive.
+
+A relationship is a first-class platform object that connects two or more parties with a defined type, status, context, and metadata.
+
+The platform should avoid hardcoding fitness-specific relationship types into the core data model.
+
+The Famm application may display relationship labels such as “trainer” and “client,” but platform-core should use industry-neutral concepts such as:
+
+- provider
+- customer
+- organization
+- community
+- member
+- referrer
+- affiliate
+
+## Layer
+
+Platform Core
+
+## Platform Primitives Affected
+
+- User
+- Organization
+- Community
+- Relationship
+- Referral
+- Affiliate
+- Event
+- ReputationSignal
+
+## Proposed Relationship Model
+
+The platform relationship model should support:
+
+```text
+relationship_id
+organization_id or tenant_id
+source_entity_id
+source_entity_type
+target_entity_id
+target_entity_type
+relationship_type
+relationship_status
+started_at
+ended_at
+created_at
+updated_at
+created_by
+metadata
+```
+
+Example relationship types:
+
+```text
+provider_customer
+business_provider
+community_member
+peer_follow
+referrer_referred
+affiliate_customer
+coach_participant
+teacher_student
+consultant_client
+```
+
+## Alternatives Considered
+
+### Alternative 1: TrainerClient Table
+
+A `trainer_client` table would be simple for Famm but too narrow for the future platform.
+
+Rejected because it would make fitness the center of the platform model.
+
+### Alternative 2: Separate Tables for Every Relationship Type
+
+This would create clear tables but would fragment the graph.
+
+Rejected because the platform needs to understand relationships across industries and applications.
+
+### Alternative 3: General Relationship Primitive
+
+This creates a flexible graph foundation.
+
+Accepted because it supports multiple relationship types, industries, communities, and future applications.
+
+## Consequences
+
+### Positive Consequences
+
+- Enables a reusable relationship graph.
+- Supports social network features.
+- Supports referrals and affiliates.
+- Supports community participation.
+- Supports peer-to-peer relationships.
+- Supports future cross-industry expansion.
+- Reduces duplication across applications.
+
+### Negative Consequences
+
+- Requires stronger validation rules.
+- Requires clear relationship type definitions.
+- Requires careful permission handling.
+- May feel abstract during early Famm development.
+
+## Cross-Industry Impact
+
+This decision allows the same platform infrastructure to support:
+
+- Trainers and clients
+- Therapists and clients
+- Tutors and students
+- Music teachers and students
+- Tattoo artists and customers
+- Coaches and participants
+- Consultants and client organizations
+- Creators and audiences
+
+Each industry uses the same core relationship graph while applying different application-layer labels.
+
+## Scale Impact
+
+### 1,000 Active Users
+
+The graph supports basic trainer-client and business-provider relationships.
+
+### 10,000 Active Users
+
+The graph supports referrals, follows, communities, and memberships.
+
+### 100,000 Active Users
+
+The graph becomes a strategic data asset for discovery, recommendations, reputation, referrals, and personalization.
+
+### Multiple Vertical Applications
+
+Each application can define industry-specific labels while relying on the same underlying relationship primitive.
+
+### Third-Party Developers
+
+APIs can expose relationship creation, lookup, and traversal without forcing developers into fitness-specific concepts.
+
+## AI Review Summary
+
+AI coding tools must not create fitness-specific relationship tables in platform-core unless explicitly approved by a future ADR.
+
+When a proposed feature introduces a new connection between users, businesses, communities, referrals, or affiliates, AI tools must first evaluate whether it can be modeled as a `Relationship`.
+
+## Final Decision
+
+Accepted.
+
+The platform will use a generalized `Relationship` primitive as the foundation for trainer-client, provider-customer, community, referral, affiliate, peer, and future cross-industry relationships.
