@@ -1,0 +1,211 @@
+# ADR-005: Community Model
+
+## Status
+
+Accepted
+
+## Date
+
+2026-06-28
+
+## Context
+
+Famm is inspired by the idea that fitness professionals often sit at the center of communities. A trainer may connect clients, friends, gyms, businesses, classes, events, and peer groups.
+
+However, this concept is not limited to fitness.
+
+The broader platform must eventually support communities for:
+
+- Therapists
+- Tutors
+- Music teachers
+- Tattoo artists
+- Coaches
+- Consultants
+- Creators
+- Local businesses
+- Professional networks
+- Peer groups
+
+If communities are modeled as gyms, classes, or trainer groups only, the platform will lose the ability to support broader social commerce use cases.
+
+## Decision
+
+The platform will model communities using a generalized `Community` primitive and community membership relationships.
+
+A community may represent:
+
+- A trainer’s client group
+- A gym community
+- A class cohort
+- A coaching group
+- A tutoring group
+- A music studio
+- A tattoo shop following
+- A creator audience
+- A professional network
+- A local commerce group
+
+The Famm application may use fitness-specific labels, but platform-core should remain industry-neutral.
+
+## Layer
+
+Platform Core
+
+## Platform Primitives Affected
+
+- User
+- Organization
+- Community
+- Relationship
+- Activity
+- Conversation
+- Offer
+- Transaction
+- Referral
+- Event
+- ReputationSignal
+
+## Proposed Community Model
+
+The platform community model should support:
+
+```text
+community_id
+organization_id or tenant_id
+name
+description
+community_type
+visibility
+status
+created_by
+created_at
+updated_at
+metadata
+```
+
+The community membership model should support:
+
+```text
+community_membership_id
+community_id
+member_entity_id
+member_entity_type
+role
+status
+joined_at
+left_at
+created_at
+updated_at
+metadata
+```
+
+Example community types:
+
+```text
+business_community
+provider_community
+customer_group
+class_cohort
+membership_group
+creator_audience
+professional_network
+local_group
+```
+
+Example community roles:
+
+```text
+owner
+admin
+moderator
+provider
+member
+guest
+```
+
+## Alternatives Considered
+
+### Alternative 1: Gym-Centered Model
+
+A gym-centered model would work for some fitness use cases but would not support solo trainers, remote coaches, non-fitness providers, or creator communities.
+
+Rejected because the platform must support multiple community types.
+
+### Alternative 2: Class-Only Groups
+
+Class-based groups are useful, but they are only one form of community.
+
+Rejected because the platform must support communities that exist outside scheduled activities.
+
+### Alternative 3: General Community Primitive
+
+Accepted because it supports many forms of social and commercial organization.
+
+## Consequences
+
+### Positive Consequences
+
+- Supports trainer-led communities.
+- Supports gyms and businesses.
+- Supports client groups.
+- Supports creator audiences.
+- Supports future social network features.
+- Supports community-based offers, activities, and referrals.
+- Supports many industries.
+
+### Negative Consequences
+
+- Requires thoughtful permission rules.
+- Requires community role management.
+- Requires moderation decisions later.
+- Requires clarity between organizations and communities.
+
+## Cross-Industry Impact
+
+This model supports:
+
+- Trainers creating client communities
+- Therapists creating support or practice communities
+- Tutors creating student cohorts
+- Music teachers creating studio groups
+- Tattoo artists creating customer followings
+- Coaches creating program groups
+- Consultants creating client communities
+- Creators creating audience communities
+
+The same primitive can support many social and commercial patterns.
+
+## Scale Impact
+
+### 1,000 Active Users
+
+Communities can support simple client groups, gym groups, and cohorts.
+
+### 10,000 Active Users
+
+Communities can support memberships, discussions, events, and referral loops.
+
+### 100,000 Active Users
+
+Communities become a core platform graph for discovery, reputation, commerce, and retention.
+
+### Multiple Vertical Applications
+
+Each application can create industry-specific community experiences on top of the same primitive.
+
+### Third-Party Developers
+
+Developers can build applications around communities without needing to rebuild membership, roles, or participation models.
+
+## AI Review Summary
+
+AI coding tools must not model communities only as gyms, classes, or trainer groups inside platform-core.
+
+When a feature involves groups, cohorts, audiences, memberships, local networks, or shared participation, AI tools must evaluate whether it belongs in the generalized `Community` primitive.
+
+## Final Decision
+
+Accepted.
+
+The platform will use a generalized `Community` primitive and community membership model. Famm may expose fitness-specific community labels in the application layer, but platform-core will remain industry-neutral.
