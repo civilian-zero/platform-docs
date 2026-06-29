@@ -42,3 +42,111 @@ created_at
 updated_at
 created_by
 deleted_at, when soft deletion is required
+```
+
+All application logic must enforce tenant scoping when reading, writing, updating, or deleting tenant-sensitive records.
+
+## Layer
+
+Platform Core
+
+## Platform Primitives Affected
+
+- User
+- Organization
+- Community
+- Relationship
+- Activity
+- Offer
+- Transaction
+- Conversation
+- Referral
+- Affiliate
+- Event
+- ReputationSignal
+
+## Alternatives Considered
+
+### Alternative 1: Single-Tenant Data Model
+
+A single-tenant model would be faster for the initial Famm MVP, but it would create major future migration risk.
+
+Rejected because Famm is intended to become the first application on a broader platform.
+
+### Alternative 2: User-Owned Records Only
+
+This would work for solo trainers but would not support gyms, multi-provider businesses, teams, organizations, agencies, or future vertical applications.
+
+Rejected because the platform must support both individuals and organizations.
+
+### Alternative 3: Tenant ID Everywhere
+
+A generic `tenant_id` field could provide flexibility, but it may obscure the distinction between users, organizations, and communities.
+
+Partially accepted. `tenant_id` may be used when the ownership model is broader than an organization, but `organization_id` is preferred for business-owned records.
+
+## Consequences
+
+### Positive Consequences
+
+- Supports multi-provider businesses.
+- Supports future B2B accounts.
+- Supports role-based permissions.
+- Supports data isolation.
+- Supports future platform applications.
+- Reduces future migration risk.
+- Creates a cleaner foundation for API access.
+
+### Negative Consequences
+
+- Slightly more complex data model.
+- Requires tenant scoping in every query.
+- Requires careful permission design.
+- Requires more disciplined testing.
+
+## Cross-Industry Impact
+
+This decision supports future use cases beyond fitness, including:
+
+- Therapists operating private practices
+- Tutors operating learning centers
+- Music teachers operating studios
+- Tattoo artists operating shops
+- Coaches operating teams or programs
+- Consultants operating client accounts
+
+Each industry may have solo providers, teams, businesses, and communities. Tenant ownership allows the platform to support all of them.
+
+## Scale Impact
+
+### 1,000 Active Users
+
+Tenant ownership may feel heavier than needed, but it prevents early data modeling mistakes.
+
+### 10,000 Active Users
+
+Tenant scoping becomes essential for reporting, permissions, and business accounts.
+
+### 100,000 Active Users
+
+Tenant isolation becomes critical for performance, privacy, security, and compliance.
+
+### Multiple Vertical Applications
+
+This decision allows multiple applications to consume the same platform core while maintaining clean data boundaries.
+
+### Third-Party Developers
+
+APIs can enforce tenant access rules consistently.
+
+## AI Review Summary
+
+AI agents must treat tenant ownership as a required platform rule. When proposing schema changes, AI coding tools must confirm whether each new table is tenant-sensitive and whether it requires `organization_id`, `tenant_id`, or `owner_user_id`.
+
+## Final Decision
+
+Accepted.
+
+The platform will be multi-tenant from the beginning.
+
+All tenant-sensitive business records must include a clear ownership boundary, with `organization_id` as the default for business-owned records.
